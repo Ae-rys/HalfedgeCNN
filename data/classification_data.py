@@ -1,3 +1,7 @@
+# This file defines the dataset class for classification. 
+# It inherits from the BaseDataset class and implements the __getitem__ and __len__ functions. 
+# It also defines the functions for finding classes and making the dataset by class.
+
 import os
 import torch
 from data.base_dataset import BaseDataset

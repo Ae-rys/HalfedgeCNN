@@ -4,3 +4,5 @@ checkpoints/*
 */*/__pycache__/*
 runs/*
 datasets/*
+
+CGDI_project_env/
