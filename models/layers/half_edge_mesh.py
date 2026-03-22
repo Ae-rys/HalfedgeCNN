@@ -1,3 +1,6 @@
+# functions to manipulate the half-edge structure, e.g. for pooling operations. 
+# Does not update the values on the halfedges, but only the structure of the mesh.
+
 import os
 import numpy as np
 from models.layers import half_edge_mesh_prepare

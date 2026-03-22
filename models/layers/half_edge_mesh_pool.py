@@ -1,3 +1,15 @@
+# Performs pooling operations.
+
+"""
+    Sorts the half-edges beased on the norms of their features and performs pooling operations
+    until the mesh is small enough (number of half-edges is smaller than or equal to the target).
+    The pooling operation is performed on the neighborhood of the half-edge and its opposite half-edge. (WHY?)
+    The neighborhood is defined as the one-ring of the vertices of the half-edge and its opposite half-edge.
+    The pooling operation is performed by the HalfEdgeNeighborhood class. After pooling, cleanup operations 
+    are performed to ensure that the mesh remains topologically valid. Finally, the features of the remaining 
+    half-edges are averaged to obtain the output features.
+"""
+
 from heapq import heappop, heapify
 import numpy as np
 import torch
@@ -16,8 +28,9 @@ class HalfEdgeMeshPool(nn.Module):
         return self.forward(half_edge_features, meshes)
 
     def forward(self, half_edge_features, meshes):
-        """ This method performs the pooling for all meshes in the batch. It creates the queue and then performs the pooling operations until the desired target is reached. It then performs
-            cleanup operations and averages features.
+        """ This method performs the pooling for all meshes in the batch. It creates the queue 
+            and then performs the pooling operations until the desired target is reached. It then 
+            performs cleanup operations and averages features.
         """
         updated_half_edge_features = []
         for mesh_index, mesh in enumerate(meshes):
@@ -42,6 +55,7 @@ class HalfEdgeMeshPool(nn.Module):
         return out_features
 
 
+    # Creates a heap of (half-edge, opposite) of the mesh with their corresponding norms as keys. The heap is used to determine the order of pooling.
     def __build_queue(self, half_edge_features, opposites):
         squared_magnitude = torch.sum(half_edge_features*half_edge_features, 0).squeeze().tolist()
 

@@ -1,3 +1,15 @@
+# Reconstructs (un-pools) half-edge features back to a larger
+# half-edge resolution using the grouping information recorded
+# during the last pooling step(s).
+
+# TODO: Modify this to implement unpooling with something else than average pooling 
+# as pooling method, e.g. max pooling. This would require to change the way the 
+# features are rebuilt in the method rebuild_features_average and to implement 
+# a new method for rebuilding the features with max pooling, e.g. rebuild_features_max. 
+# The method forward would then need to be modified to use the new method for rebuilding 
+# the features instead of rebuild_features_average.
+
+
 import torch
 import torch.nn as nn
 
@@ -22,7 +34,7 @@ class MeshUnpool(nn.Module):
         groups = [self.zero_pad_groups(mesh.get_last_groups_from_history(), number_of_half_edges) for mesh in meshes]
         groups = torch.cat(groups, dim=0).view(batch_size, number_of_half_edges, -1)
 
-        # Get the"occurrences" data from the pooling step. Occurrences contains the number of half edges that were averaged together to get the resulting features.
+        # Get the "occurrences" data from the pooling step. Occurrences contains the number of half edges that were averaged together to get the resulting features.
         # Again, if the given pooling target is bigger then the lenght of occurrences, pad with ones.
         occurrences = [self.__one_pad_occurrences(mesh.get_last_occurrences_from_history()) for mesh in meshes]
         occurrences = torch.cat(occurrences, dim=0).view(batch_size, 1, -1)

@@ -1,3 +1,5 @@
+# Does the actual convolution operation on the half edge meshes.
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

@@ -1,3 +1,5 @@
+# Functions to read mesh from .obj files etc.
+
 import os
 import numpy as np
 

@@ -1,3 +1,8 @@
+# Prepares the mesh data for the convolution and pooling operations. 
+# We read the data from the .obj file, perform augmentations if desired, 
+# calculate the half edge data structure and extract the features.
+# TODO: modify this file to use HKS features instead of the original features used in MeshCNN.
+
 import numpy as np
 import os
 import ntpath

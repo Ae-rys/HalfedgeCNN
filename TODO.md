@@ -4,11 +4,12 @@
 - make a new model with learnable parameters for aggregation
     - find benchmarks to compare the two models
 - try this model on a Kaggle problem (j'ai trouvé un dataset, avec des accuracies. Je pourrais entraîner mon modèle dessus et voir ce que ça donne. J'ai l'impression qu'il est beaucoup plus gros que celui utilisé dans l'article)
+- be able to draw the pooling operation and talk about the condition
 
 # Maybe?
 - try to make a similar model for mesh denoising
 - try on different datasets
-- try to use HKS to have symmmetry invariances
+- try to use HKS to have symmmetry invariances (see half_edge_mesh_prepare.py)
 - ???
 
 # DONE:

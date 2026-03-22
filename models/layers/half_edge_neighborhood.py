@@ -1,3 +1,7 @@
+# Does the pool operations, i.e. the collapsing of half-edge neighborhoods, for pooling.
+# Uses functions from half_edge_mesh.py to manipulate the half-edge structure and functions 
+# from accuracy_calculators.py to calculate the accuracy of the pooling operations.
+
 class HalfEdgeNeighborhood():
     def __init__(self, mesh, half_edge_id):
         self.mesh = mesh

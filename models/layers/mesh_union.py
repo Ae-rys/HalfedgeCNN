@@ -1,3 +1,8 @@
+# Tracks which original half-edge features contribute to
+# each remaining half-edge during pooling/collapses and 
+# rebuilds averaged pooled features.
+# TODO: Modify this file to also support other pooling methods, e.g. max pooling, by changing the way the features are rebuilt.
+
 import torch
 from torch.nn import ConstantPad2d
 
@@ -22,7 +27,7 @@ class MeshUnion:
         # The edge with the index 3 (source) is now merged into the edge with the index 0 (target),
         # resulting in the row 0 being now [1, 0, 0, 1, 1, 0, 1].
         self.groups[target, :] += self.groups[source, :]
-        
+
 
     def get_group(self, edge_key):
         return self.groups[edge_key, :]
@@ -37,6 +42,7 @@ class MeshUnion:
         self.groups = torch.clamp(self.groups, 0, 1)
         return self.groups[tensor_mask, :]
 
+    # This could be modified to also support other pooling methods, e.g. max pooling, by changing the way the features are rebuilt.
     def rebuild_features_average(self, half_edge_features, mask, target_edges):
         # Reduces the group size to the number of edges after the pooling in one direction by removing the deleted edges.
         # Also clamps values between 0 an 1.
