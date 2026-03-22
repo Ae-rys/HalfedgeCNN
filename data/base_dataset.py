@@ -1,4 +1,6 @@
-# Creates a base dataset, which is 
+# A "base dataset" is a dataset class that defines the basic functions and utilities for loading data. 
+# It is inherited by the specific dataset classes (e.g. SegmentationData, ClassificationData) 
+# that implement the __getitem__ and __len__ functions.
 
 import torch.utils.data as data
 import numpy as np

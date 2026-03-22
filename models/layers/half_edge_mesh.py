@@ -5,6 +5,7 @@ from models.layers.output_data_interface_layer import EdgeBasedDataOutputInterfa
 
 
 class HalfEdgeMesh:
+    """ Almost all the functions are here to allow the pooling operations. They do not update the values on the halfedges, but only the structure of the mesh."""
 
     def __init__(self, file=None, opt=None, hold_history=False, export_folder=''):
         # Default init member variables.
@@ -76,6 +77,7 @@ class HalfEdgeMesh:
                or self.__nbh_size == 9)
 
     def __load_mesh_data(self, mesh_data):
+        """ loads the mesh data from the given dictionary into the member variables of this class. """
         self.__filename = str(mesh_data['filename'])
 
         self.__vertex_positions = mesh_data['vertex_positions']
@@ -97,6 +99,8 @@ class HalfEdgeMesh:
         self.face_index_to_halfedge_indices = mesh_data['face_index_to_halfedge_indices']
 
         self.half_edge_features = mesh_data['half_edge_features']
+
+### ALL OF THE FOLLOWING IS FOR THE POOLING OPERATIONS.
 
     def redirect_half_edge(self, half_edge_to_redirect_id, target_half_edge_id):
         """ Redirects half-edges in the half-edge structure. Used to realize collapses."""
@@ -125,6 +129,8 @@ class HalfEdgeMesh:
         self.__update_history_data(groups, half_edge_mask)
         self.__pool_count += 1
         self.__export()
+
+### END OF POOLING OPERATIONS.
 
     def get_last_occurrences_from_history(self):
         return self.__occurrences_history[-1]
@@ -158,14 +164,15 @@ class HalfEdgeMesh:
 
         return faces
 
-
     def get_old2new_vertex_indices(self):
+        """ used after pooling? """
         old2new_vertex_indices = np.zeros(self.__vertex_mask.shape[0], dtype=np.int32)
         old2new_vertex_indices[self.__vertex_mask] = np.arange(0, np.ma.where(self.__vertex_mask)[0].shape[0])
         return old2new_vertex_indices
 
 
     def __export(self):
+        """ used to export the current mesh, e.g. after pooling? The export is done by the output_data_interface_layer, which creates an .obj file with the current mesh data. """
         if not self.__export_folder:
             return
 
@@ -207,6 +214,7 @@ class HalfEdgeMesh:
 
     def __update_half_edge_neighborhood(self):
         """ Based on neighborhood size as described in the paper in section 7, Table at the end and section 3.1."""
+        """ This function creates the neighborhoods for each halfedge and saves them in self.half_edge_neighborhoods."""
         half_edge_neighborhoods = np.full((len(self.half_edges), self.__nbh_size), -1, dtype=np.int64)
         for half_edge_id in range(len(self.half_edges)):
             # Indices of the half-edges of the face of self.
@@ -256,6 +264,7 @@ class HalfEdgeMesh:
 
 
     def __remove_half_edge_from_vertex_to_half_edges(self, half_edge_id):
+        """ used in remove_half_edge, which is used in pooling. """
         half_edge = self.half_edges[half_edge_id]
 
         for vertex in half_edge:
@@ -263,6 +272,7 @@ class HalfEdgeMesh:
 
 
     def __correct_indices_in_data(self, half_edge_mask):
+        """ remaps the in the data structures stored halfedge indices to the new ones after pooling."""
         # First we create a Map from the old to the new indices:
         old2new_indices = np.zeros(half_edge_mask.shape[0], dtype=np.int32)
         old2new_indices[half_edge_mask] = np.arange(self.half_edge_count)
@@ -282,6 +292,7 @@ class HalfEdgeMesh:
 
 
     def __remove_deleted_halfedges_from_data(self, half_edge_mask):
+        """ also for pooling """
         # Remove entries of halfedges that have been removed during pooling.
         self.half_edge_neighborhoods = self.half_edge_neighborhoods[half_edge_mask]
         self.half_edges = self.half_edges[half_edge_mask]
@@ -290,6 +301,7 @@ class HalfEdgeMesh:
 
 
     def __merge_vertices(self, vertex_a_id, vertex_b_id):
+        """ also for pooling."""
         # Always remove the vertex with the lower index.
         if vertex_a_id < vertex_b_id:
             remaining_vertex = vertex_a_id

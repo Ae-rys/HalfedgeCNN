@@ -16,7 +16,9 @@ class HalfEdgeMeshConv(nn.Module):
     """
 
     def __init__(self, in_channels, out_channels, kernel_width=5, bias=True):
+        # To have all the stuff in nn.Module, e.g. to be able to use .to(device) on the whole module and to have the parameters registered in the module.
         super(HalfEdgeMeshConv, self).__init__()
+        # Usual convolution layer
         self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=(1, kernel_width), bias=bias)
 
 
@@ -30,20 +32,22 @@ class HalfEdgeMeshConv(nn.Module):
 
         # Time of function to this point (Dell, GPU): 0,0 s (0%).
 
-        # get neighbor information for each mesh in batch
+        # get neighbor information for each mesh in batch (no features yet, only the indices of the half edges in the neighborhood).
         number_of_half_edges_in_features = half_edge_features.shape[2]
         device = half_edge_features.device
         batch_half_edge_neighborhoods = torch.cat([self.get_prepared_half_edge_neighborhoods_from_mesh(i, number_of_half_edges_in_features, device) for i in meshes], 0)
 
-        # Time of function to this point ( Dell, GPU): 0,0009551048278808594 s (45%) => torch.cat loop takes 45 % of func time.
+        # Time of function to this point (Dell, GPU): 0,0009551048278808594 s (45%) => torch.cat loop takes 45 % of func time.
 
-        # Dimensions of batch_half_edge_neighborhoods are (num_batches, num_channels, num_half_edges, nbh_size_plus_one)
+        # Now the features of the half edges in the neighborhood of each half edge are gathered.
+        # Dimensions of batch_half_edge_neighborhoods are (num_batches, num_channels, num_half_edges, nbh_size_plus_one).
         features_of_neighborhoods = self.__gather_neighborhood_features(half_edge_features, batch_half_edge_neighborhoods)
 
         # Time of function to this point (Dell, GPU): 0,0019474029541015625 s (92%) =>  create_GeMM_he takes 47 % of func time.
 
         # Dimensions of half_edge_features after the convolution are (num_batches, num_channels, num_half_edges, 1).
         # because the features of the nbh_size_plus_one half edges in the last dimension where convoluted into one value.
+        # We have indeed one feature per half edge in the output.
         half_edge_features = self.conv(features_of_neighborhoods)
 
         # Time of function to this point (Dell, GPU): 0,002115488052368164  s (100%)=>  conv takes 8 % of func time.
