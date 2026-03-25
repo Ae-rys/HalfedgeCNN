@@ -7,7 +7,6 @@
 import numpy as np
 import torch
 
-
 class AccuracyCalculator():
     def calculate_segmentation_accuracy(self, predictions, ssegs, meshes):
         """Depending on the base of the segmentation, the predictions need to be transformed to match the soft
