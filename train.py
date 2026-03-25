@@ -59,8 +59,9 @@ if __name__ == '__main__':
     num_epochs = opt.niter + opt.niter_decay
     for epoch in range(opt.epoch_count, num_epochs + 1):
         start_time = time.time()
-
+        print(f"Epoch {epoch}/{num_epochs} started.")
         training_time = train_one_epoch()
+        print(f"Epoch {epoch} finished. Training time: {training_time:.2f} seconds.")
         model.save_network('latest')
 
         if epoch % opt.run_test_freq == 0:
