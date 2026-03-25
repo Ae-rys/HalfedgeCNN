@@ -10,7 +10,7 @@ import ntpath
 from models.layers.input_data_interface_layer import extract_edges, read_faces, read_vertex_positions, get_edges_from_face, extract_half_edges, \
     create_index_dict
 
-from models.layers.hks import compute_hks_features1, compute_hks_features2
+from models.layers.hks import compute_hks_features
 
 
 class MeshData:
@@ -332,7 +332,7 @@ def extract_features(mesh_data, feature_selection):
                 feature_extractors = [calculate_dihedral_angles, get_normalized_edge_lengths]
             # A new feature set to use HKS features.
             elif feature_selection == 3:
-                feature_extractors = [compute_hks_features1, compute_hks_features2]
+                feature_extractors = [compute_hks_features]
             else:
                 raise ValueError('Unknown feature selection: ' + str(feature_selection))
 
