@@ -10,6 +10,8 @@ import ntpath
 from models.layers.input_data_interface_layer import extract_edges, read_faces, read_vertex_positions, get_edges_from_face, extract_half_edges, \
     create_index_dict
 
+from models.layers.hks import compute_hks_features
+
 
 class MeshData:
     def __getitem__(self, item):
@@ -305,6 +307,7 @@ def check_halfedges_circularity(half_edge_count, half_edge_next):
     return True
 
 
+# TODO: make a new possibility in feature_selection for HKS
 def extract_features(mesh_data, feature_selection):
     features = []
 
@@ -313,15 +316,23 @@ def extract_features(mesh_data, feature_selection):
     with np.errstate(divide='raise'):
         try:
             feature_extractors = []
-            # Original features used in MeshCNN.
+            # Original features used in MeshCNN. 
+            # ie. angle "out of plane" + angle "in plane" between faces + ratio height/base
+            # The features are symmetrized to handle order ambiguity.
             if feature_selection == 0:
                 feature_extractors = [calculate_dihedral_angles, symmetric_opposite_angles, symmetric_ratios]
             # Feature Set used in MeshCNN in its non symmetrized form.
+            # ie. angle "out of plane" + ratios height/base  + angle "in plane"
+            # Not symmetrized.
             elif feature_selection == 1:
                 feature_extractors =[calculate_dihedral_angles, get_ratios, get_opposite_angles]
             # Fundamental form input features [Milano et al. 2020; Barda et al. 2021].
+            # ie. angle "out of plane" + edge length (normalized to be scale invariant)
             elif feature_selection == 2:
                 feature_extractors = [calculate_dihedral_angles, get_normalized_edge_lengths]
+            # A new feature set to use HKS features.
+            elif feature_selection == 3:
+                feature_extractors = [compute_hks_features]
             else:
                 raise ValueError('Unknown feature selection: ' + str(feature_selection))
 
@@ -367,6 +378,7 @@ def symmetric_ratios(mesh_data, edge_points):
 
 
 def calculate_dihedral_angles(mesh_data, vertices_of_adjacent_faces):
+    # The dihedral angle is the angle between the two faces of an edge. It is calculated by the angle between the normals of the two faces.
     normals_a = get_normals(mesh_data.vertex_positions, vertices_of_adjacent_faces, 0)
     normals_b = get_normals(mesh_data.vertex_positions, vertices_of_adjacent_faces, 3)
     dot = np.sum(normals_a * normals_b, axis=1).clip(-1, 1)
@@ -583,8 +595,9 @@ def get_opposite_angles(mesh_data, edge_points, side=0):
     return opposite_angles
 
 
-def get_normalized_edge_lengths(mesh_data, _):
-    return np.expand_dims(mesh_data.half_edge_lengths / np.max(mesh_data.half_edge_lengths), axis=0)
+def get_normalized_edge_lengths(mesh_data: MeshData, _):
+    # The edge lengths are normalized by the maximum edge length in the mesh to be scale invariant.
+    return np.expand_dims(mesh_data.half_edge_lengths / np.max(mesh_data.half_edge_lengths), axis=0) #shape (1, num_half_edges)
 
 
 def calculate_edge_lengths(mesh_data):

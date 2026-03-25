@@ -17,7 +17,7 @@ class BaseOptions:
         self.parser.add_argument('--dataset_mode', required=True, type=str, choices={"classification", "segmentation"}, help='Choose if segmentation or classification should be performed.')
         self.parser.add_argument('--export_folder', type=str, default='', help='If set, export intermediate collapses to this folder.')
         self.parser.add_argument('--fc_n', type=int, help='Number between fc and nclasses.')
-        self.parser.add_argument('--feat_selection', type=int, choices={0, 1, 2}, help='Feature Selection to use. See extract_features_from_he in half_edge_mesh_prepare.py for details.')
+        self.parser.add_argument('--feat_selection', type=int, choices={0, 1, 2, 3}, help='Feature Selection to use. See extract_features_from_he in half_edge_mesh_prepare.py for details.')
         self.parser.add_argument('--gpu_ids', type=str, help='IDs of the GPUs to use, e.g. 0  0,1,2, 0,2. Use -1 to use only CPU.')
         self.parser.add_argument('--init_gain', type=float, help='Scaling factor if normal, xavier or orthogonal initialization for the weights is used.')
         self.parser.add_argument('--init_type', type=str, choices={"normal", "xavier", "kaiming", "orthogonal"}, help='The initialization method to use for the weights of the network.')
