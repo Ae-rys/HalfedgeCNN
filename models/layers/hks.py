@@ -155,7 +155,7 @@ def compute_hks_features(mesh_data, _):
         hks_features: array of HKS features for each half-edge (shape: (1, num_half_edges))
     """
     L, M = laplace_beltrami_matrix_f(mesh_data)
-    evals, evecs = eigen_decomposition(L, M, k=100)
+    evals, evecs = eigen_decomposition(L, M, k=50)
     hks_features_vertices = compute_hks_vertices(evals, evecs, t=0.01)
 
     hks_features = np.zeros(len(mesh_data.half_edges))
