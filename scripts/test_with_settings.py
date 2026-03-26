@@ -1,10 +1,11 @@
 import os
+import numpy as np
 from train_util.train_util import get_dataset_name_from_command_line
 from settings.settings import print_cuda_information, get_clas_or_seg_settings_dict, create_settings_string, get_cuda_settings_string, \
     get_dataset_settings_dict, get_test_settings_dict, get_general_settings_dict
 
 
-def test(dataset_name, best_model=False, export_folder=None):
+def test(dataset_name, model=None, export_folder=None, export_hks_values=False):
     print_cuda_information()
 
     dataset_dict           = get_dataset_settings_dict(dataset_name)
@@ -20,10 +21,10 @@ def test(dataset_name, best_model=False, export_folder=None):
     command = 'python -W ignore test.py '
     command += create_settings_string(combined_settings)
     command += get_cuda_settings_string()
-    if best_model:
-        command += '--which_epoch best '
-    else:
-        command += '--which_epoch latest '
+    if export_hks_values:
+        command += '--export_hks_values '
+    if model:
+        command += '--model ' + model + ' '
     if export_folder is not None:
         command += '--export_folder '+export_folder+ ' '
     print("Command:", command)
@@ -32,5 +33,17 @@ def test(dataset_name, best_model=False, export_folder=None):
 
 if __name__ == '__main__':
     """ The script expects the name of the dataset as an argument. A text file conaining the settings for the dataset must exist."""
-    dataset_name = get_dataset_name_from_command_line()
-    test(dataset_name=dataset_name, best_model=False)
+
+    import argparse
+    parser = argparse.ArgumentParser("test with settings")
+    parser.add_argument('--model', default='best_model.pth', type=str,
+                        help="give the name of the model to be tested, e.g. 'best_model.pth'")
+    parser.add_argument('--dataset', default='shrec_16', type=str,
+                        help="give the name of the dataset to be tested, e.g. 'shrec_16'")
+    parser.add_argument('--export_folder', default='export/classification', type=str,
+                        help="path to the folder where HKS values will be exported (if --export_hks_values is also given)")
+    parser.add_argument('--export_hks_values', action='store_true',
+                        help="flag to export HKS values for the meshes in the test set (if --export_folder is also given)")
+    args = parser.parse_args()
+    
+    test(dataset_name=args.dataset, model=args.model, export_folder=args.export_folder, export_hks_values=args.export_hks_values)

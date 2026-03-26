@@ -55,7 +55,7 @@ class ClassifierModel:
             self.scheduler = networks.get_scheduler(self.optimizer, opt)
 
         if not self.is_train or opt.continue_train:
-            self.load_network(opt.which_epoch)
+            self.load_network(opt.model)
 
     def set_input(self, data):
         input_half_edge_features = torch.from_numpy(data['half_edge_features']).float()
@@ -90,9 +90,9 @@ class ClassifierModel:
 
 ##################
 
-    def load_network(self, which_epoch):
+    def load_network(self, model):
         """ load model from disk"""
-        save_filename = '%s_net.pth' % which_epoch
+        save_filename = model
         load_path = join(self.save_dir, save_filename)
         net = self.net
         if isinstance(net, torch.nn.DataParallel):

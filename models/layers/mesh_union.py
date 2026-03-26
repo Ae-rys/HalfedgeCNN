@@ -28,7 +28,6 @@ class MeshUnion:
         # resulting in the row 0 being now [1, 0, 0, 1, 1, 0, 1].
         self.groups[target, :] += self.groups[source, :]
 
-
     def get_group(self, edge_key):
         return self.groups[edge_key, :]
 

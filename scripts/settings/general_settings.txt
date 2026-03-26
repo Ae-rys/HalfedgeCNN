@@ -1,6 +1,6 @@
 # Network settings
 --pooling half_edge_pooling
---feat_selection 1
+--feat_selection 3
 --nbh_size 5
 --fc_n 100
 

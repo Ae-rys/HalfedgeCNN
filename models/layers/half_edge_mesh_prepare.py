@@ -19,7 +19,8 @@ class MeshData:
 
 
 def get_mesh_data(file: str, opt):
-    """ Fills empty mesh object from path to .obj file. """
+    """ Fills empty mesh object from path to .obj file. """    
+    
     path = get_random_mesh_path(file, opt.number_augmentations)
 
     mesh_data = None
@@ -42,7 +43,8 @@ def get_mesh_data(file: str, opt):
             mesh_data_dict[key] = mesh_data[key]
         mesh_data = mesh_data_dict
 
-        mesh_data['vertex_to_half_edges'] = vertex_to_half_edges
+        mesh_data['vertex_to_half_edges'] = vertex_to_half_edges    
+    
     else:
         mesh_data = from_scratch(file, opt)
         save_mesh_data(path, mesh_data)
@@ -333,12 +335,16 @@ def extract_features(mesh_data, feature_selection):
             # A new feature set to use HKS features.
             elif feature_selection == 3:
                 feature_extractors = [compute_hks_features]
+            
+            elif feature_selection == 4:
+                feature_extractors = [calculate_dihedral_angles, get_ratios, get_opposite_angles, compute_hks_features]
             else:
                 raise ValueError('Unknown feature selection: ' + str(feature_selection))
 
             for extractor in feature_extractors:
                 feature = extractor(mesh_data, vertices_of_adjacent_faces)
                 features.append(feature)
+                
             return np.concatenate(features, axis=0)
 
         except Exception as e:

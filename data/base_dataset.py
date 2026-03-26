@@ -26,7 +26,6 @@ class BaseDataset(data.Dataset):
         (here N=5)
         """
 
-
         mean_std_cache = os.path.join(self.opt.dataroot, 'mean_std_cache.p')
         if not os.path.isfile(mean_std_cache):
             print('computing mean std from train data...')
