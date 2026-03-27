@@ -1,4 +1,4 @@
-#   Uses hks functions to calculate hks values for meshes in the test set and exports them as .npy files
+# Uses hks functions to calculate hks values for meshes in the test set and exports them as .npy files
 # To put one folder above to execute.
 import os
 import numpy as np
