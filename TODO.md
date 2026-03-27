@@ -4,4 +4,5 @@
 - Try the models on new datasets (eg. modelnet40)
 - Implement a training with a validation set
 - Explore the usage of such models for mesh denoising
-- Use the current code to understand how the best models use the HKS input data
+- Spend more time using the current code to understand how a model can use HKS data
+- Adapt everything to the segmentation task
