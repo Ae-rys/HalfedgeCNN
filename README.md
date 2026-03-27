@@ -1,7 +1,44 @@
 <img src='images/halfedgecnn_image.png' align="right" width=500>
 <br><br><br>
 
-# HalfedgeCNN
+# HalfedgeCNN With HKS
+
+*This is a modified version of the code of Halfedge CNN. I modified the mesh viewer, added a new set of features using only the Heat Kernel Signature (HKS) as input for the model, and added some code for visualisation (we can really "see what the model sees" because the HKS is in $\mathbb{R}$).*
+
+My contributions in the code are mostly in the following files:
+- ```util/mesh_viewer_polyscope```: There was already a mesh viewer, but it was pretty horrible and hard to use. With polyscope, it is way simpler.
+- ```models/layers/hks.py```: The file in which the HKS in computed. I tried to follow the logic of the other files from HalfedgeCNN.
+- ```models/layers/half_edge_mesh_pool.py```: modified to store the "updated HKS values" on the halfedges BEFORE each pooling operation (this choice is quite arbitrary)
+- ```models/layers/half_edge_mesh_prepare.py```: modified to add the case "features == 3", where the model uses only HKS (this was quite easy, the code was made to allow this kind of modification)
+- ```scripts/test_with_settings.py```: modified the logic to be able to call every model by their name (it was not the case originally)
+- ```calculate_test_hks```: Used to store the HKS of the test files
+- ```scripts/calculate_test_hks_with_settings.py```: Used to call the above file
+
+Files not used anymore:
+- ```manual_calculations```: As the name indicates, it corresponds to the beginning of the project, where I was doing the HKS manually. It uses the code from the graded TP.
+- ```download_from_kaggle```: Used to download modelnet40 from Kaggle. I did not use it in the end.
+
+*Rk: I am not sure my code works well for segmentation, as all I wanted to do is use my models for classification.*
+
+*Rk: I also added commentaries at the top of the files in the folder 'models' and on some functions, to better understand the structure of the code.*
+
+*Rk: See the file TODO.md for ideas of things I could have done with more time.*
+
+Concretely, to reproduce my work, you can:
+
+- go to the google colab to train a new halfedgeCNN model using HKS on shrec_16
+- download the weights as indicated in the colab and give a nice name to the model
+- download the data using ```bash scripts/get_shrec_data.sh```
+- execute ```python scripts/calculate_test_hks_with_settings.py``` to store initial HKS values for each mesh.
+- execute ```python scripts/test_with_settings.py --model name_of_model.pth --export_pooled_channel i``` on your machine, storing the "pooled meshes" and the "updated hks values" of the i_th channel of the model (see the images from the pdf)
+- execute ```python util/mesh_viewer_polyscope --files end_of_path.obj --hks_values end_of_path.npy``` (eg. ```python util/mesh_viewer_polyscope.py --files T0_0.obj --hks_values T0_initial_hks.npy```) to see the "updated hks values" seen by the first channel of the model as we go down the layers (ie. before each pool). Everything is stored in ```checkpoints/shrec_16/export/classification```.
+- enjoy
+
+Finally, here is a modified version of the readme from the github of HalfedgeCNN:
+
+----------
+----------
+
 
 ### Eurographics Symposium on Geometry Processing 2023
 
@@ -47,6 +84,7 @@ conda install -c conda-forge tensorboardx
 Depending on the system, the installation of additional packages might be necessary.
 
 ### 3D Shape Classification on SHREC
+*(most of this is in the colab for the training of the model)*
 For starting the SHREC classification training, first download and unzip the dataset using the get_shrec_data.sh script:
 ```bash
 bash scripts/get_shrec_data.sh
@@ -59,11 +97,11 @@ To view the training loss and accuracy plots, run ```tensorboard --logdir runs``
 
 After training the latest model can be tested using the following command:
 ```bash
-python scripts/test_with_settings.py shrec_16  
+python scripts/test_with_settings.py --model latest_model.pth
 ```
 The best found model can be tested using the following command:
 ```bash
-python scripts/test_best_with_settings.py shrec_16
+python scripts/test_best_with_settings.py --model best_model.pth
 ```
 
 The resulting poolings can be exported with:
@@ -75,6 +113,10 @@ Examples of the resulting poolings can be viewed (after exporting) for example w
 python util/mesh_viewer.py --files checkpoints/shrec_16/result_objs/T74_0.obj checkpoints/shrec_16/result_objs/T74_1.obj checkpoints/shrec_16/result_objs/T74_2.obj checkpoints/shrec_16/result_objs/T74_3.obj checkpoints/shrec_16/result_objs/T74_4.obj
 ```
 
+*The things that follow were in the original README.md. Since I do not use Segmentation in my project, it might need some adjustments in the commands. The end about neigbourhoods, pooling and feature selection is available.*
+
+--------
+--------
 
 ### 3D Shape Segmentation on Humans
 For starting the human segmentation training, first download and unzip the dataset using the get_human_data.sh script:
@@ -148,7 +190,6 @@ python scripts/evaluate_runs.py 200
 python scripts/remove_unfinished_runs.py 200
 python scripts/show_chart.py 200
 ```
-
 
 ### Change Neighborhood Size
 The used convolution neighborhood can be selected by changing the number behind the --nbh_size parameter in scripts/settings/general_settings.txt.

@@ -15,3 +15,6 @@
 
 # Number of models to create
 --number_of_runs 1
+
+# Type of model to train 
+--feat_selection 3

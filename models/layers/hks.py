@@ -1,3 +1,6 @@
+# TODO: Implement time scales for HKS (multiple values of t for each halfedge)
+""" I did not do it in the end, since with 1 value of t it was better for visualisation, and it already worked very well"""
+
 import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import eigsh
@@ -117,8 +120,8 @@ def eigen_decomposition(L: np.ndarray, M: np.ndarray, k: int = 100, eps: float =
         evecs: matrix of eigenvectors (each column is an eigenvector)
     """
     # sparse matrices for efficient eigenvalue computation
-    L_sparse = sparse.csc_matrix(L + eps * np.eye(L.shape[0]))  # add small value to diagonal for numerical stability
-    M_sparse = sparse.csc_matrix(M + eps * np.eye(M.shape[0]))  # add small value to diagonal for numerical stability
+    L_sparse = sparse.csc_matrix(L + eps * np.eye(L.shape[0]))  # I add small value to diagonal for numerical stability
+    M_sparse = sparse.csc_matrix(M + eps * np.eye(M.shape[0])) 
 
     # We solve L * phi = lambda * M * phi
     # 'SM' is for 'Smallest Magnitude' eigenvalues, but since we want the smallest non-zero eigenvalues, we use 'sigma=0' to shift the spectrum
@@ -161,8 +164,8 @@ def compute_hks_features(mesh_data, _):
     hks_features = np.zeros(len(mesh_data.half_edges))
 
     for i, half_edge in enumerate(mesh_data.half_edges):
-        v1 = half_edge[0]  # vertex at the start of the half-edge
-        v2 = half_edge[1]  # vertex at the end of the half-edge
-        hks_features[i] = max(hks_features_vertices[v2], hks_features_vertices[v1]) # I could do something else, lije a difference
+        v1 = half_edge[0]
+        v2 = half_edge[1]
+        hks_features[i] = max(hks_features_vertices[v2], hks_features_vertices[v1]) # Seems to work better than the difference. i could try other things
 
     return np.expand_dims(hks_features, axis=0)

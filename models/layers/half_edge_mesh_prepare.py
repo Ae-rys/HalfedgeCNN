@@ -1,7 +1,8 @@
 # Prepares the mesh data for the convolution and pooling operations. 
 # We read the data from the .obj file, perform augmentations if desired, 
 # calculate the half edge data structure and extract the features.
-# TODO: modify this file to use HKS features instead of the original features used in MeshCNN.
+
+""" Rk: This file was modified to use HKS """
 
 import numpy as np
 import os
@@ -335,9 +336,6 @@ def extract_features(mesh_data, feature_selection):
             # A new feature set to use HKS features.
             elif feature_selection == 3:
                 feature_extractors = [compute_hks_features]
-            
-            elif feature_selection == 4:
-                feature_extractors = [calculate_dihedral_angles, get_ratios, get_opposite_angles, compute_hks_features]
             else:
                 raise ValueError('Unknown feature selection: ' + str(feature_selection))
 

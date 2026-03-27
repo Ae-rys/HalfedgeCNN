@@ -2,8 +2,6 @@
 # and to convert model outputs (half-edge predictions) to 
 # edge- or face-based segmentation formats.
 
-# OSEF
-
 import os
 from tempfile import mkstemp
 import shutil

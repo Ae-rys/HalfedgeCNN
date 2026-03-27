@@ -47,6 +47,7 @@ class HalfEdgeMeshPool(nn.Module):
             try:
                 export_channel = None if ch_env is None else (int(ch_env) if ch_env != 'all' else 'all')
             except Exception:
+                print(f"Invalid EXPORT_POOLED_CHANNEL value '{ch_env}', defaulting to channel 0")
                 export_channel = 0
 
             # number of pre-pool snapshots to save per mesh (4 pools -> 4 pre-pool files)
@@ -95,10 +96,7 @@ class HalfEdgeMeshPool(nn.Module):
                         if sel.size != mesh.half_edge_count:
                             sel = sel[:mesh.half_edge_count] if sel.size > mesh.half_edge_count else np.pad(sel, (0, mesh.half_edge_count - sel.size), mode='constant', constant_values=0.0)
 
-                        if stage == 0:
-                            pre_fname = os.path.join(self._export_pooled_dir, f"{mesh._HalfEdgeMesh__filename.split('.')[0]}_initial_hks.npy")
-                        else:
-                            pre_fname = os.path.join(self._export_pooled_dir, f"{mesh._HalfEdgeMesh__filename.split('.')[0]}_s{stage}_ch{ch_label}.npy")
+                        pre_fname = os.path.join(self._export_pooled_dir, f"{mesh._HalfEdgeMesh__filename.split('.')[0]}_s{stage}_ch{ch_label}.npy")
                         np.save(pre_fname, sel)
                 except Exception:
                     pass

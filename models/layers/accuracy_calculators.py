@@ -1,8 +1,4 @@
 # Utilities to calculate the accuracy of the predictions of the model. 
-# Depending on the base of the segmentation, the predictions need to 
-# be transformed to match the soft segmentations (??).
-
-# OSEF
 
 import numpy as np
 import torch

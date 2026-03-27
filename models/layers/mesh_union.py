@@ -1,7 +1,9 @@
 # Tracks which original half-edge features contribute to
 # each remaining half-edge during pooling/collapses and 
 # rebuilds averaged pooled features.
-# TODO: Modify this file to also support other pooling methods, e.g. max pooling, by changing the way the features are rebuilt.
+
+# TODO: Modify this file to also support other pooling methods, e.g. max pooling
+""" I did not do that in the end"""
 
 import torch
 from torch.nn import ConstantPad2d

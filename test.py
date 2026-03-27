@@ -13,11 +13,14 @@ def run_test_or_val(phase):
     
     # set export dir for pooled meshes if provided in options
     import os
-    if getattr(opt, 'export_pooled_dir', None):
-        os.environ['EXPORT_POOLED_DIR'] = str(opt.export_pooled_dir)
-    elif getattr(opt, 'export_folder', None):
+    if getattr(opt, 'export_folder', None):
         # reuse existing export_folder option if present
         os.environ['EXPORT_POOLED_DIR'] = str(opt.export_folder)
+    
+    # set channel to export (if provided via options)
+    # supports opt.export_pooled_channel or opt.export_channel
+    if getattr(opt, 'export_channel', None) is not None:
+        os.environ['EXPORT_POOLED_CHANNEL'] = str(opt.export_channel)
 
     # Set number of augmentations to 1 for test and val, because we do not want to augment the test and val data.
     opt.number_augmentations = 1

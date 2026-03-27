@@ -2,12 +2,8 @@
 # half-edge resolution using the grouping information recorded
 # during the last pooling step(s).
 
-# TODO: Modify this to implement unpooling with something else than average pooling 
-# as pooling method, e.g. max pooling. This would require to change the way the 
-# features are rebuilt in the method rebuild_features_average and to implement 
-# a new method for rebuilding the features with max pooling, e.g. rebuild_features_max. 
-# The method forward would then need to be modified to use the new method for rebuilding 
-# the features instead of rebuild_features_average.
+# TODO: Modify this to implement unpooling with something else than average pooling, eg. max pooling
+""" I did not do this in the end """
 
 
 import torch

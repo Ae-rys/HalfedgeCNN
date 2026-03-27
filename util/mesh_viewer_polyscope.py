@@ -5,13 +5,13 @@ from pygel3d import hmesh
 if __name__ == "__main__":
     import argparse, os
     parser = argparse.ArgumentParser("view meshes")
-    parser.add_argument('--files', nargs='+', required=True, type=str,
+    parser.add_argument('--file', required=True, type=str,
                         help="list of 1 or more .obj files")
     parser.add_argument('--hks_values', nargs='*', default=None, type=str,
                         help="list of .npy/.npz files with half-edge values (one per mesh)")
     args = parser.parse_args()
     
-    mesh = hmesh.load(args.files[0])
+    mesh = hmesh.load("checkpoints/shrec_16/export/classification/" + args.file)
     
     allfaces = [[v for v in mesh.circulate_face(f)] for f in mesh.faces()]
 
