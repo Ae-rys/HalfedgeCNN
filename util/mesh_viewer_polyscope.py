@@ -20,6 +20,7 @@ if __name__ == "__main__":
     
     if args.hks_values is not None:
         hks = np.load("checkpoints/shrec_16/export/classification/" + args.hks_values[0])
-        polyscope.get_surface_mesh("My Mesh").add_scalar_quantity("HKS", hks.flatten(), defined_on="halfedges")
+        print("shape of hks:", hks.shape)
+        polyscope.get_surface_mesh("My Mesh").add_scalar_quantity("Halfedge_values", hks.flatten(), defined_on="halfedges")
     
     polyscope.show()

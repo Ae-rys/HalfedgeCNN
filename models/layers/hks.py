@@ -148,24 +148,29 @@ def compute_hks_vertices(evals: np.ndarray, evecs: np.ndarray, t: float = 0.01) 
     hks = np.sum(hks_result, axis=1)
     
     return hks
-
-def compute_hks_features(mesh_data, _):
+    
+def compute_hks_features(t, k, mesh_data, _):
     """
     Computes the HKS features for each vertex in the mesh.
+        t: time parameter for HKS
+        k: number of eigenvalues/eigenvectors to compute
         mesh_data: input mesh data containing the half-edge structure and vertex positions
         _: placeholder for compatibility with feature extractor interface
     Returns:
         hks_features: array of HKS features for each half-edge (shape: (1, num_half_edges))
     """
     L, M = laplace_beltrami_matrix_f(mesh_data)
-    evals, evecs = eigen_decomposition(L, M, k=100)
-    hks_features_vertices = compute_hks_vertices(evals, evecs, t=0.01)
+    evals, evecs = eigen_decomposition(L, M, k=k)
+    hks_features_vertices = compute_hks_vertices(evals, evecs, t=t)
 
     hks_features = np.zeros(len(mesh_data.half_edges))
 
     for i, half_edge in enumerate(mesh_data.half_edges):
         v1 = half_edge[0]
         v2 = half_edge[1]
-        hks_features[i] = max(hks_features_vertices[v2], hks_features_vertices[v1]) # Seems to work better than the difference. i could try other things
+        hks_features[i] = max(hks_features_vertices[v2], hks_features_vertices[v1]) # Seems to work better than the difference. I could try other things
 
     return np.expand_dims(hks_features, axis=0)
+
+def compute_hks_features_wrapper(t, k):
+    return lambda mesh_data, _: compute_hks_features(t, k, mesh_data, _)

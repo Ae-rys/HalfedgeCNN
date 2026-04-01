@@ -11,7 +11,7 @@ import ntpath
 from models.layers.input_data_interface_layer import extract_edges, read_faces, read_vertex_positions, get_edges_from_face, extract_half_edges, \
     create_index_dict
 
-from models.layers.hks import compute_hks_features
+from models.layers.hks import compute_hks_features_wrapper
 
 
 class MeshData:
@@ -310,7 +310,6 @@ def check_halfedges_circularity(half_edge_count, half_edge_next):
     return True
 
 
-# TODO: make a new possibility in feature_selection for HKS
 def extract_features(mesh_data, feature_selection):
     features = []
 
@@ -335,7 +334,9 @@ def extract_features(mesh_data, feature_selection):
                 feature_extractors = [calculate_dihedral_angles, get_normalized_edge_lengths]
             # A new feature set to use HKS features.
             elif feature_selection == 3:
-                feature_extractors = [compute_hks_features]
+                feature_extractors = [compute_hks_features_wrapper(t=0.01, k=100)]
+            elif feature_selection == 4:
+                feature_extractors = [compute_hks_features_wrapper(t=0.01, k=100), compute_hks_features_wrapper(t=0.1, k=100), compute_hks_features_wrapper(t=1, k=100)]
             else:
                 raise ValueError('Unknown feature selection: ' + str(feature_selection))
 
@@ -343,6 +344,7 @@ def extract_features(mesh_data, feature_selection):
                 feature = extractor(mesh_data, vertices_of_adjacent_faces)
                 features.append(feature)
                 
+            # print("shape of all features:", np.concatenate(features, axis=0).shape)
             return np.concatenate(features, axis=0)
 
         except Exception as e:
