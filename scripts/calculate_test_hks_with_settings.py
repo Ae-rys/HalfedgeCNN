@@ -3,7 +3,7 @@ from settings.settings import print_cuda_information, create_settings_string, ge
     get_test_settings_dict, get_general_settings_dict, get_cuda_settings_string
 
 
-def calculate_test_hks(dataset_name="shrec_16"):
+def calculate_test_hks(dataset_name="shrec_16", t=0.1):
     print_cuda_information()
 
     dataset_dict           = get_dataset_settings_dict(dataset_name)
@@ -16,6 +16,7 @@ def calculate_test_hks(dataset_name="shrec_16"):
 
     command = 'python calculate_test_hks.py '
     command += '--feat_selection 3 '
+    command += '--t ' + str(t) + ' '
     command += create_settings_string(combined_settings)
     command += get_cuda_settings_string()
     print("Command:", command)
@@ -25,4 +26,11 @@ def calculate_test_hks(dataset_name="shrec_16"):
 if __name__ == '__main__':
     """ The script expects the name of the dataset as an argument. A text file conaining the settings for the dataset must exist."""
 
-    calculate_test_hks()
+    import argparse
+    parser = argparse.ArgumentParser("calculate test HKS with settings")
+    parser.add_argument('--t', type=float, default=0.1, help='Time parameter for HKS calculation')
+
+    args = parser.parse_args()
+    t = args.t
+
+    calculate_test_hks(t=t)

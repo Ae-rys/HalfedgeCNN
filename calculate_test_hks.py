@@ -7,11 +7,11 @@ from models.layers.half_edge_mesh_prepare import from_scratch
 from scripts.settings.settings import get_dataset_settings_dict, create_settings_string
 from options.test_options import TestOptions
 
-def calculate_and_export_hks(mesh_path, export_folder):
+def calculate_and_export_hks(mesh_path, export_folder, k=100):
     
     opt = TestOptions().parse()
     mesh_data = from_scratch(file=mesh_path, opt=opt)
-    hks_features = compute_hks_features(mesh_data, None)
+    hks_features = compute_hks_features(opt.t, k, mesh_data, None)
     
     # Create export folder if it doesn't exist
     os.makedirs(export_folder, exist_ok=True)
