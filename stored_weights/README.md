@@ -1,1 +1,1 @@
-This folder contains weights of models trained on google colab. To use them, put them in 'checkpoints/shrec_16/' (you will have to create those directories) and then use 'scripts/test_with_settings'
+This folder contains weights of models trained on google colab. To use them, put them in 'checkpoints/shrec_16/' (you will have to create those directories) and then use 'scripts/test_with_settings.py'
