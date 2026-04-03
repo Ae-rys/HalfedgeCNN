@@ -8,4 +8,5 @@ class TestOptions(BaseOptions):
         self.parser.add_argument('--phase', type=str, choices={"train", "val", "test"}, default='test', help='Name of the subfolder in datasets to use the meshes from.')
         self.parser.add_argument('--model', type=str, default='latest_net.pth', help="give the name of the model to be tested, e.g. 'best_net.pth'")
         self.parser.add_argument('--export_channel', type=str, default=None, help="give the name of the channel to export")
+        self.parser.add_argument('--t', type=float, default=0.1, help='Time parameter for HKS calculation')
         self.is_train = False  # Set to True if training functionality like autograd is necessary. Since we are testing here, this is not necessary, and we can save some computation time.

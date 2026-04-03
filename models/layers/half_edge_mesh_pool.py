@@ -52,20 +52,24 @@ class HalfEdgeMeshPool(nn.Module):
 
             # number of pre-pool snapshots to save per mesh (4 pools -> 4 pre-pool files)
             NUM_EXPORT_PRE_STAGES = 4
-            
+
         for mesh_index, mesh in enumerate(meshes):
             # ensure per-mesh stage counter exists (0..n_pool_layers-1)
             stage = getattr(mesh, '_export_pool_stage', 0)
+            
+            #print("shape of half_edge_features:", half_edge_features.shape) # shape: (batch_size, channels, max_half_edges_in_batch,1)
 
             # features for this mesh (tensor C x N)
-            half_edge_features_of_mesh_without_padding = half_edge_features[mesh_index, :, :mesh.half_edge_count]
+            half_edge_features_of_mesh_without_padding = half_edge_features[mesh_index, :, :mesh.half_edge_count] # shape: (C,N,1)
 
             if self._export_pooled_dir:
                 # --- save ONLY pre-pool selected channel as 1D array (one value per half-edge)
                 # Save at most NUM_EXPORT_PRE_STAGES per mesh (stage numbers 0..NUM_EXPORT_PRE_STAGES-1)
-                try:
+                try:                    
                     if self._export_pooled_dir and stage < NUM_EXPORT_PRE_STAGES:
                         arr = half_edge_features_of_mesh_without_padding.detach().cpu().numpy()
+                        # print(arr.shape)
+                        # print(mesh.half_edge_count)
                         arr = np.asarray(arr, dtype=np.float32)
                         # ensure canonical (C, N)
                         if arr.ndim == 2:
@@ -92,13 +96,14 @@ class HalfEdgeMeshPool(nn.Module):
                             ch_label = str(ch)
 
                         # sanitize non-finite values and ensure length equals half_edge_count
-                        sel = np.nan_to_num(sel, nan=0.0, posinf=1e6, neginf=-1e6)
+                        sel = np.nan_to_num(sel, nan=0.0, posinf=1e6, neginf=-1e6) # shape: (N,)
                         if sel.size != mesh.half_edge_count:
                             sel = sel[:mesh.half_edge_count] if sel.size > mesh.half_edge_count else np.pad(sel, (0, mesh.half_edge_count - sel.size), mode='constant', constant_values=0.0)
 
                         pre_fname = os.path.join(self._export_pooled_dir, f"{mesh._HalfEdgeMesh__filename.split('.')[0]}_s{stage}_ch{ch_label}.npy")
                         np.save(pre_fname, sel)
                 except Exception:
+                    print("Error exporting pre-pool features for mesh '{}', stage {}, channel '{}'. Skipping export for this stage.".format(mesh._HalfEdgeMesh__filename, stage, ch_label))
                     pass
 
             heap = self.__build_queue(half_edge_features_of_mesh_without_padding, mesh.half_edge_opposite)

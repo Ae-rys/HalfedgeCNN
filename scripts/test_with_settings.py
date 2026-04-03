@@ -5,7 +5,7 @@ from settings.settings import print_cuda_information, get_clas_or_seg_settings_d
     get_dataset_settings_dict, get_test_settings_dict, get_general_settings_dict
 
 
-def test(dataset_name, model=None, export_folder=None, export_channel=None, export_hks_values=False):
+def test(dataset_name, feature_selection, model=None, export_folder=None, export_channel=None, export_hks_values=False, ):
     print_cuda_information()
 
     dataset_dict           = get_dataset_settings_dict(dataset_name)
@@ -19,6 +19,7 @@ def test(dataset_name, model=None, export_folder=None, export_channel=None, expo
 
     # -W ignore used because of VisibleDeprecationWarning that otherwise clutter output
     command = 'python -W ignore test.py '
+    command += '--feat_selection ' + str(feature_selection) + ' '
     command += create_settings_string(combined_settings)
     command += get_cuda_settings_string()
     if export_hks_values:
@@ -48,6 +49,8 @@ if __name__ == '__main__':
                         help="channel to export (if --export_folder is also given)")
     parser.add_argument('--export_hks_values', action='store_true',
                         help="flag to export HKS values for the meshes in the test set (if --export_folder is also given)")
+    parser.add_argument('--feat_selection', required=True,
+                        help="flag to specify the feature selection to be used for testing.")
     args = parser.parse_args()
 
-    test(dataset_name=args.dataset, model=args.model, export_folder=args.export_folder, export_channel=args.export_channel, export_hks_values=args.export_hks_values)
+    test(dataset_name=args.dataset, feature_selection=args.feat_selection, model=args.model, export_folder=args.export_folder, export_channel=args.export_channel, export_hks_values=args.export_hks_values)
