@@ -29,7 +29,7 @@ Concretely, to reproduce my work, you can:
 - go to the [google colab](https://colab.research.google.com/drive/1g8LGdkq8E7y8MkP9wVEJNrr1XTs4-Jud?usp=sharing) to train a new halfedgeCNN model using HKS on shrec_16
 - download the weights as indicated in the colab and give a nice name to the model
 - download the data using ```bash scripts/get_shrec_data.sh```
-- execute ```python scripts/calculate_test_hks_with_settings.py``` to store initial HKS values for each mesh.
+- execute ```python scripts/calculate_test_hks_with_settings.py --t 0.01``` to store initial HKS values for each mesh.
 - execute ```python scripts/test_with_settings.py --model name_of_model.pth --feat_selection k --export_pooled_channel i``` on your machine, storing the "pooled meshes" and the "updated hks values" of the i_th channel of the model (see the images from the pdf). k = 3 for 1 HKS, k = 4 for 4 HKS.
 - execute ```python util/mesh_viewer_polyscope --feat_selection k --files end_of_path.obj --hks_values end_of_path.npy``` (eg. ```python util/mesh_viewer_polyscope.py --feat_selection 4 --files T0_0.obj --hks_values T0_initial_hks.npy```) to see the "updated hks values" seen by the first channel of the model as we go down the layers (ie. before each pool). k = 3 for 1 HKS, k = 4 for 4 HKS. Everything is stored in ```checkpoints/shrec_16/export/classification```.
 - enjoy
