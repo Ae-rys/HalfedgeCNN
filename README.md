@@ -3,7 +3,7 @@
 
 # HalfedgeCNN With HKS
 
-*This is a modified version of the code of Halfedge CNN. I modified the mesh viewer, added a new set of features using only the Heat Kernel Signature (HKS) as input for the model, and added some code for visualisation (we can really "see what the model sees" because the HKS is in $\mathbb{R}$).*
+*This is a modified version of the code of Halfedge CNN. I modified the mesh viewer, added a new set of features using only the Heat Kernel Signature (HKS) as input for the model, and added some code for visualisation.*
 
 My contributions in the code are mostly in the following files:
 - ```util/mesh_viewer_polyscope```: There was already a mesh viewer, but it was pretty horrible and hard to use. With polyscope, it is way simpler.
